@@ -1,21 +1,21 @@
 --commands to make use of stored procedures for NSF-480 database
 
 --view data in original non-normalized data from csv file 
-select * from Family31;
+SELECT * FROM Family31;
 
 --view data in normalized table (one monkey per row)
-select * from MacacaSubject
-ORDER BY SequenceID asc;
+SELECT * FROM MacacaSubject
+ORDER BY SequenceID ASC;
 
 --drop and create new MacacaSubject table with headers only
-exec CreateMacacaSubjectTable;
+EXEC CreateMacacaSubjectTable;
 
 --populate MacacaSubject table with data from Family31
-exec FlattenData;
+EXEC FlattenData;
 
 
 --insert new monkey (input parameters for each field)
-exec InsertMonkey                 
+EXEC InsertMonkey                 
                  @SubjectCode = null, 
                  @SubjectID   = 'X572', 
                  @Gender      = 'm', 
@@ -26,16 +26,18 @@ exec InsertMonkey
                  @FamilyID    = '1';
 
 --delete monkey (input parameter SubjectID)
-exec DeleteMonkey
+EXEC DeleteMonkey
 				@SubjectID = 'X572';
 
 --get the data for a monkey (input parameter SubjectID)
-exec GetMonkey
+EXEC GetMonkey
 				@SubjectID = '240';
 
 --update the death year for a monkey (input SubjectID and new DeathYear)
-exec UpdateDeathYear
+EXEC UpdateDeathYear
 @SubjectID = 'X572',
 @DeathYear = '1999'
+
+				 
 
 				 
