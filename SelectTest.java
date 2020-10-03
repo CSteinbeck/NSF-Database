@@ -1,3 +1,6 @@
+// Prints the info for all Macaca monkeys.
+// Can be edited to print Rhesus monkeys. 
+
 package csdbdao;
 
 import java.sql.ResultSet;
@@ -11,7 +14,8 @@ public class SelectTest {
 	
 	public SelectTest() {
 		dba = new SqlServerDbAccessor();
-		dba.setDbName("CayoSantiagoRhesusDB");
+//		dba.setDbName("CayoSantiagoRhesusDB"); // use for default database
+		dba.setDbName("KerryO"); // use this line for Kerry's database
 		dba.connectToDb();
 //		stmt = dba.getStmt();
 	}
@@ -20,9 +24,11 @@ public class SelectTest {
 		SelectTest test = new SelectTest();
 
 //		String[] cols = {"SequenceId", "OriginalSubjectId", "Gender", "BirthYear"};
-		String[] cols = {"SequenceId", "OriginalSubjectId", "Gender", "BirthYear", "DeathYear", "MotherId", "Generation", "FamilyId"};
-//		String[] cols = {"*"};
-		test.selectColumnsFromTable("CSRhesusSubject", cols);
+		//String[] cols = {"SequenceId", "OriginalSubjectId", "Gender", "BirthYear", "DeathYear", "MotherId", "Generation", "FamilyId"};
+		String[] cols = {"*"};
+//		test.selectColumnsFromTable("CSRhesusSubject", cols); // use if using default db
+		test.selectColumnsFromTable("MacacaSubject", cols); // use if using Kerry's db
+			
 	}
 
 	private void selectColumnsFromTable(String table, String[] cols) {
@@ -47,8 +53,7 @@ public class SelectTest {
 			System.out.println(columns);            
 			int j;            
 			for (j=1; j<columns; j++)                
-				System.out.print(meta.getColumnName(j) + ", ");            
-			
+				System.out.print(meta.getColumnName(j) + ", ");
 			System.out.println(meta.getColumnName(j));            
 
 			while (result.next()) {
