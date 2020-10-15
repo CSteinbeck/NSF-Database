@@ -8,15 +8,18 @@ import java.sql.PreparedStatement;
 public class SqlServerDbAccessor {
 
 	private Connection con;
-//	private Statement stmt;
+	//private Statement stmt;
 	private PreparedStatement prepStmt;
-//	private ResultSet rs;
+	//private ResultSet rs;
 	
 	private String connectionUrl;
 	
 	private String defaultConnUrl = "jdbc:sqlserver://;" +
             "servername=csdata.cd4sevot432y.us-east-1.rds.amazonaws.com;"
-			+ "user=NsfResearcher;password=r2h0e2S0u5s;"; 
+//			+ "user=csc312cloud;password=c3s!c2Cld;";
+//            + "user=csc480dev;password=c4s*C0sWe;"; 
+//			+ "user=NsfResearcher;password=r2h0e2S0u5s;";
+			+ "user=administrator;password=MercerBear$2020;";
 			// + "databaseName=JLBookstore;";
 	/*
 	// in WSC
