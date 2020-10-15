@@ -41,7 +41,7 @@ public class TwoSidedBarChartDemo extends ApplicationFrame {
       jfreechart.setBackgroundPaint(new Color(255, 255, 255, 0));
       CategoryPlot plot = (CategoryPlot) jfreechart.getPlot();
       plot.setBackgroundPaint(Color.WHITE);
-      plot.setOutlineVisible(true);
+      //plot.setOutlineVisible(true);
       plot.getDomainAxis().setVisible(false);
       plot.getRangeAxis().setVisible(true);
  
@@ -62,7 +62,7 @@ public class TwoSidedBarChartDemo extends ApplicationFrame {
       plot.addRangeMarker(marker);
  
       BarRenderer renderer = (BarRenderer) plot.getRenderer();
-      renderer.setBarPainter(new StandardBarPainter());
+      //renderer.setBarPainter(new StandardBarPainter());
  
      // adjust the bar width and spacing between bars
       renderer.setMaximumBarWidth(.9);
@@ -71,7 +71,7 @@ public class TwoSidedBarChartDemo extends ApplicationFrame {
       renderer.setSeriesPaint(0, Color.RED);
       renderer.setSeriesPaint(1, Color.BLUE);
  
-      renderer.setShadowVisible(false);
+      //renderer.setShadowVisible(false);
       renderer.setBaseItemLabelGenerator(new StandardCategoryItemLabelGenerator("{1}", 
     		  NumberFormat.getInstance()));
       renderer.setBaseItemLabelsVisible(true);
