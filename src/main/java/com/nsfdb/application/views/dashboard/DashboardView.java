@@ -13,7 +13,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.nsfdb.application.views.main.MainView;
 import com.vaadin.flow.router.RouteAlias;
-import java.util.ArrayList;
+import java.util.HashMap;
 
 @Route(value = "dashboard", layout = MainView.class)
 @PageTitle("Dashboard")
@@ -32,23 +32,34 @@ public class DashboardView extends HorizontalLayout {
         setId("hello-world-view");
         Analytics test = new Analytics();
         monkeyIdSelector = new ComboBox<>();
-        monkeyIdSelector.setItems("420", "123", "103", "001", "939", "478", "275");
+        monkeyIdSelector.setItems("415", "416", "417", "418", "419", "420", "421");
         monkeyIdSelector.setLabel("Select Monkey ID");
         Label monkeyInfo = new Label();
+        Label columns = new Label();
         famInfo = new Accordion();
 
         HorizontalLayout searchComp = new HorizontalLayout();
+        VerticalLayout infoPanel = new VerticalLayout();
 
         search = new Button("Search", click -> {
-            ArrayList<String> data = test.getMonkeyInfo(monkeyIdSelector.getValue());
-            monkeyInfo.setText(data.get(0));
+            HashMap<String,String> data = test.getMonkeyInfo(monkeyIdSelector.getValue());
+            String columnText = "";
+            String text = "";
+            for (String s : data.keySet()) {
+                columnText += s + ", ";
+                text += data.get(s) + ", ";
+            }
+            monkeyInfo.setText(text);
+            columns.setText(columnText);
         });
 
-        searchComp.setVerticalComponentAlignment(Alignment.END, famInfo);
-        searchComp.add(monkeyIdSelector, famInfo);
+        infoPanel.add(columns, monkeyInfo);
+
+        searchComp.setVerticalComponentAlignment(Alignment.END, search);
+        searchComp.add(monkeyIdSelector, search);
 
         //layout = new SplitLayout(searchComp);
-        add(searchComp);
+        add(searchComp, infoPanel);
     }
 
 }

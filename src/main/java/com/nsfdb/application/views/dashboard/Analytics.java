@@ -5,7 +5,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Analytics {
     private Statement stmt;
@@ -18,9 +18,9 @@ public class Analytics {
 //		stmt = dba.getStmt();
     }
 
-    protected ArrayList<String> getMonkeyInfo(String subjectId) {
+    protected HashMap<String, String> getMonkeyInfo(String subjectId) {
         String query = "EXEC GetMonkey " + subjectId;
-        ArrayList<String> data = new ArrayList<String>();
+        HashMap<String, String> data = new HashMap<String, String>();
         ResultSet result = null;
         try {
             stmt = dba.getConnection().createStatement();
@@ -30,16 +30,15 @@ public class Analytics {
             ResultSetMetaData meta = result.getMetaData();
             int columns = meta.getColumnCount();
 
-
-            int j;
-//			for (j=1; j<columns; j++)
-//				System.out.print(meta.getColumnName(j) + ", ");
+            //int j;
+//			for (j=1; j<=columns; j++)
+//				data.put(meta.getColumnName(j), "");
 //			System.out.println(meta.getColumnName(j));
 
 
             while (result.next()) {
                 for (int i = 1; i <= columns; i++)
-                    data.add(result.getString(i));
+                    data.put(meta.getColumnName(i), result.getString(i));
 //					System.out.print(result.getString(i) +
 //							((i==columns)?"":",\t"));
 //				System.out.println();
