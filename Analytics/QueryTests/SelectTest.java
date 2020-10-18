@@ -1,5 +1,5 @@
-// Prints the info for all Macaca monkeys.
-// Can be edited to print Rhesus monkeys. 
+// Prints the info for all Rhesus monkeys.
+// Can be edited to print Macaca monkeys. 
 
 package analytics;
 
