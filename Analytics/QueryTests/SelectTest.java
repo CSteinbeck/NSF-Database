@@ -1,7 +1,7 @@
-// Prints the info for all Macaca monkeys.
-// Can be edited to print Rhesus monkeys. 
+// Prints the info for all Rhesus monkeys.
+// Can be edited to print Macaca monkeys. 
 
-package csdbdao;
+package analytics;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -10,24 +10,24 @@ import java.sql.Statement;
 
 public class SelectTest {
 	private Statement stmt;
-	private SqlServerDbAccessor dba;
+	private analytics.SqlServerDbAccessor dba;
 	
 	public SelectTest() {
-		dba = new SqlServerDbAccessor();
-//		dba.setDbName("CayoSantiagoRhesusDB"); // use for default database
-		dba.setDbName("KerryO"); // use this line for Kerry's database
+		dba = new analytics.SqlServerDbAccessor();
+		dba.setDbName("CayoSantiagoRhesusDB"); // use for default database
+		//dba.setDbName("KerryO"); // use this line for Kerry's database
 		dba.connectToDb();
-//		stmt = dba.getStmt();
+		//stmt = dba.getStmt();
 	}
 
 	public static void main(String[] args) {
 		SelectTest test = new SelectTest();
 
-//		String[] cols = {"SequenceId", "OriginalSubjectId", "Gender", "BirthYear"};
+		//String[] cols = {"OriginalSubjectId", "MotherId"};
 		//String[] cols = {"SequenceId", "OriginalSubjectId", "Gender", "BirthYear", "DeathYear", "MotherId", "Generation", "FamilyId"};
 		String[] cols = {"*"};
-//		test.selectColumnsFromTable("CSRhesusSubject", cols); // use if using default db
-		test.selectColumnsFromTable("MacacaSubject", cols); // use if using Kerry's db
+		test.selectColumnsFromTable("CSRhesusSubject", cols); // use if using default db
+		//test.selectColumnsFromTable("MacacaSubject", cols); // use if using Kerry's db
 			
 	}
 
