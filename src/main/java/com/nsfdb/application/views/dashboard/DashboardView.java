@@ -9,11 +9,24 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.treegrid.TreeGrid;
 import com.vaadin.flow.router.PageTitle;
+import com.vaadin.flow.data.provider.hierarchy.AbstractBackEndHierarchicalDataProvider;
+import com.vaadin.flow.data.provider.hierarchy.HierarchicalDataProvider;
+import com.vaadin.flow.data.provider.hierarchy.HierarchicalQuery;
 import com.vaadin.flow.router.Route;
 import com.nsfdb.application.views.main.MainView;
 import com.vaadin.flow.router.RouteAlias;
 import java.util.HashMap;
+import com.nsfdb.application.analytics.FamilyTree.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Collections;
+import java.util.stream.Stream;
+import java.util.stream.Collectors;
+import com.nsfdb.application.analytics.Analytics;
+import com.nsfdb.application.analytics.Monkey;
 
 @Route(value = "dashboard", layout = MainView.class)
 @PageTitle("Dashboard")
@@ -30,7 +43,6 @@ public class DashboardView extends HorizontalLayout {
     public DashboardView() {
 
         setId("hello-world-view");
-        Analytics test = new Analytics();
         monkeyIdSelector = new ComboBox<>();
         monkeyIdSelector.setItems("415", "416", "417", "418", "419", "420", "421");
         monkeyIdSelector.setLabel("Select Monkey ID");
@@ -42,15 +54,7 @@ public class DashboardView extends HorizontalLayout {
         VerticalLayout infoPanel = new VerticalLayout();
 
         search = new Button("Search", click -> {
-            HashMap<String,String> data = test.getMonkeyInfo(monkeyIdSelector.getValue());
-            String columnText = "";
-            String text = "";
-            for (String s : data.keySet()) {
-                columnText += s + ", ";
-                text += data.get(s) + ", ";
-            }
-            monkeyInfo.setText(text);
-            columns.setText(columnText);
+            monkeyInfo.setText(monkeyIdSelector.getValue());
         });
 
         infoPanel.add(columns, monkeyInfo);
@@ -58,8 +62,16 @@ public class DashboardView extends HorizontalLayout {
         searchComp.setVerticalComponentAlignment(Alignment.END, search);
         searchComp.add(monkeyIdSelector, search);
 
+        Analytics data = new Analytics("CayoSantiagoRhesusDB");
+
+        TreeGrid<Monkey> grid = new TreeGrid<>();
+
+        grid.setItems(data.getRootMonkey(), data.getChildMonkies("1"));
+        grid.addHierarchyColumn(Monkey::getSubjectId).setHeader("Subject ID");
+        grid.addColumn(Monkey::getBirthYear).setHeader("Birth Year");
+
         //layout = new SplitLayout(searchComp);
-        add(searchComp, infoPanel);
+        add(searchComp, infoPanel, grid);
     }
 
 }
