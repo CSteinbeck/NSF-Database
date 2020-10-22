@@ -121,4 +121,7 @@ public class Monkey
     public String getMotherId() {return this.MotherId;}
     public String getGeneration() {return this.Generation;}
     public String getFamilyId() {return this.FamilyId;}
+
+    @Override
+    public String toString() { return this.SubjectId; }
 }

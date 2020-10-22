@@ -106,4 +106,17 @@ public class MonkeyNode {
 
         return child;
     }
+
+    public String getBirthDay() { return this.monkey.getBirthYear(); }
+
+    public String getGender() {
+        switch (this.monkey.getGender()) {
+            case "f":
+                return "Female";
+            case "m":
+                return "Male";
+            default:
+                return "Unknown";
+        }
+    }
 }

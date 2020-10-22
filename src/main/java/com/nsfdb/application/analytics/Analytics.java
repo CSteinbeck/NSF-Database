@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 public class Analytics {
     private SqlServerDbAccessor dba;
     private FamilyTree familytree;
+    private List<MonkeyNode> monkeyList;
 
     public Analytics( String dbName )
     {
@@ -27,32 +28,29 @@ public class Analytics {
         this.dba.getConnection();
 
         this.familytree = new FamilyTree(dbName, "CSRhesusSubject", "1");
+        this.monkeyList = this.familytree.getMonkeyList();
     }
 
     public List<MonkeyNode> getMonkeyList() {
         return familytree.getMonkeyList();
     }
 
-    public List<Monkey> getMonkeys() {
-        List<Monkey> allMonkeys = new ArrayList<>();
-        for (MonkeyNode mN : familytree.getMonkeyList()) {
-            allMonkeys.add(mN.getMonkey());
-        }
-        return allMonkeys;
+    public List<MonkeyNode> getMonkeys() {
+        return this.monkeyList;
     }
 
-    public List<Monkey> getRootMonkey() {
-        List<Monkey> rootMonkeys = new ArrayList<>();
-        rootMonkeys.add(familytree.getMonkeyList().get(0).getMonkey());
+    public List<MonkeyNode> getRootMonkies() {
+        List<MonkeyNode> rootMonkeys = new ArrayList<>();
+        for (int i = 0; i < this.monkeyList.size(); i++) {
+            if (this.monkeyList.get(i).getMonkey().getMotherId() == null) {
+                rootMonkeys.add(this.monkeyList.get(i));
+            }
+        }
         return rootMonkeys;
     }
 
-    public List<Monkey> getChildMonkies(String motherID) {
-        List<Monkey> allMonkeys = new ArrayList<>();
-        for (MonkeyNode mN : familytree.getMonkeyList()) {
-            allMonkeys.add(mN.getMonkey());
-        }
-        return allMonkeys.stream().filter( monkey -> monkey.getMotherId() == motherID).collect(Collectors.toList());
+    public List<MonkeyNode> getChildMonkies(MonkeyNode parent) {
+        return parent.getChildren();
     }
 
 }

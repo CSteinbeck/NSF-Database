@@ -64,11 +64,14 @@ public class DashboardView extends HorizontalLayout {
 
         Analytics data = new Analytics("CayoSantiagoRhesusDB");
 
-        TreeGrid<Monkey> grid = new TreeGrid<>();
+        List<MonkeyNode> monkeyList = data.getMonkeys();
 
-        grid.setItems(data.getRootMonkey(), data.getChildMonkies("1"));
-        grid.addHierarchyColumn(Monkey::getSubjectId).setHeader("Subject ID");
-        grid.addColumn(Monkey::getBirthYear).setHeader("Birth Year");
+        TreeGrid<MonkeyNode> grid = new TreeGrid<>();
+
+        grid.setItems(data.getRootMonkies(), data::getChildMonkies);
+        grid.addHierarchyColumn(MonkeyNode::getMonkey).setHeader("Subject ID");
+        grid.addColumn(MonkeyNode::getBirthDay).setHeader("Birth Year");
+        grid.addColumn(MonkeyNode::getGender).setHeader("Gender");
 
         //layout = new SplitLayout(searchComp);
         add(searchComp, infoPanel, grid);
