@@ -15,6 +15,7 @@ import com.vaadin.flow.data.provider.hierarchy.AbstractBackEndHierarchicalDataPr
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalDataProvider;
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalQuery;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.component.html.Image;
 import com.nsfdb.application.views.main.MainView;
 import com.vaadin.flow.router.RouteAlias;
 import java.util.HashMap;
@@ -69,12 +70,19 @@ public class DashboardView extends HorizontalLayout {
         TreeGrid<MonkeyNode> grid = new TreeGrid<>();
 
         grid.setItems(data.getRootMonkies(), data::getChildMonkies);
+        //grid.addComponentColumn(item -> createIconImage(item)).setHeader("Icon");
         grid.addHierarchyColumn(MonkeyNode::getMonkey).setHeader("Subject ID");
-        grid.addColumn(MonkeyNode::getBirthDay).setHeader("Birth Year");
-        grid.addColumn(MonkeyNode::getGender).setHeader("Gender");
+        //grid.addColumn(MonkeyNode::getBirthDay).setHeader("Birth Year");
 
+        grid.setId("familyTree");
         //layout = new SplitLayout(searchComp);
         add(searchComp, infoPanel, grid);
+    }
+
+    private Image createIconImage(MonkeyNode monkey) {
+        Image im = new Image("images/GenderIcons/" + monkey.getIcon(), "Monkey Icon");
+        im.addClassName("monkeyIcon");
+        return im;
     }
 
 }

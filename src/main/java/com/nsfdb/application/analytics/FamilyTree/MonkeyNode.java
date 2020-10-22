@@ -109,14 +109,18 @@ public class MonkeyNode {
 
     public String getBirthDay() { return this.monkey.getBirthYear(); }
 
-    public String getGender() {
+    public String getIcon() {
         switch (this.monkey.getGender()) {
             case "f":
-                return "Female";
+                if (this.hasChildren()) {
+                    return "monkeyMom.png";
+                } else {
+                    return "redMonkey.png";
+                }
             case "m":
-                return "Male";
+                return "blueMonkey.png";
             default:
-                return "Unknown";
+                return "purpleMonkey.png";
         }
     }
 }

@@ -123,5 +123,7 @@ public class Monkey
     public String getFamilyId() {return this.FamilyId;}
 
     @Override
-    public String toString() { return this.SubjectId; }
+    public String toString() { return (this.SubjectId + "-" + this.Gender + "(" +
+            this.BirthYear + "-" + ((this.DeathYear == "R") ? "0" : this.DeathYear) + ")" +
+            ((this.MotherId == null) ? "" : this.MotherId) + "-" + this.Generation + "#" + this.FamilyId); }
 }

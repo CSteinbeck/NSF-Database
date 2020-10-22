@@ -31,9 +31,6 @@ public class Analytics {
         this.monkeyList = this.familytree.getMonkeyList();
     }
 
-    public List<MonkeyNode> getMonkeyList() {
-        return familytree.getMonkeyList();
-    }
 
     public List<MonkeyNode> getMonkeys() {
         return this.monkeyList;
