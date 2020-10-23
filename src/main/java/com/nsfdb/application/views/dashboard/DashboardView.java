@@ -2,6 +2,7 @@ package com.nsfdb.application.views.dashboard;
 
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dependency.CssImport;
@@ -18,12 +19,11 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.component.html.Image;
 import com.nsfdb.application.views.main.MainView;
 import com.vaadin.flow.router.RouteAlias;
-import java.util.HashMap;
+
+import java.util.*;
+
 import com.nsfdb.application.analytics.FamilyTree.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Collections;
+
 import java.util.stream.Stream;
 import java.util.stream.Collectors;
 import com.nsfdb.application.analytics.Analytics;
@@ -43,46 +43,78 @@ public class DashboardView extends HorizontalLayout {
 
     public DashboardView() {
 
-        setId("hello-world-view");
-        monkeyIdSelector = new ComboBox<>();
-        monkeyIdSelector.setItems("415", "416", "417", "418", "419", "420", "421");
-        monkeyIdSelector.setLabel("Select Monkey ID");
+        setId("dashboard-view");
         Label monkeyInfo = new Label();
         Label columns = new Label();
-        famInfo = new Accordion();
+        Analytics data = new Analytics("CayoSantiagoRhesusDB");
+        setSizeFull();
+
+        monkeyIdSelector = new ComboBox<>();
+        monkeyIdSelector.setItems(data.getMonkeySubjectIds());
+        monkeyIdSelector.setLabel("Select Monkey ID");
 
         HorizontalLayout searchComp = new HorizontalLayout();
         VerticalLayout infoPanel = new VerticalLayout();
 
-        search = new Button("Search", click -> {
-            monkeyInfo.setText(monkeyIdSelector.getValue());
-        });
-
-        infoPanel.add(columns, monkeyInfo);
-
-        searchComp.setVerticalComponentAlignment(Alignment.END, search);
-        searchComp.add(monkeyIdSelector, search);
-
-        Analytics data = new Analytics("CayoSantiagoRhesusDB");
 
         List<MonkeyNode> monkeyList = data.getMonkeys();
 
         TreeGrid<MonkeyNode> grid = new TreeGrid<>();
 
         grid.setItems(data.getRootMonkies(), data::getChildMonkies);
-        //grid.addComponentColumn(item -> createIconImage(item)).setHeader("Icon");
-        grid.addHierarchyColumn(MonkeyNode::getMonkey).setHeader("Subject ID");
-        //grid.addColumn(MonkeyNode::getBirthDay).setHeader("Birth Year");
+        grid.addComponentHierarchyColumn(MonkeyNodeComponent::new).setHeader("Family Tree");
+        grid.expandRecursively(monkeyList, 0);
 
         grid.setId("familyTree");
+        grid.setHeightFull();
+
+        search = new Button("Search", click -> {
+            Optional<MonkeyNode> foundMonkey = monkeyList.stream().filter(monkey -> monkey.getMonkey()
+                    .getSubjectId() == monkeyIdSelector.getValue()).findAny();
+            grid.asSingleSelect().setValue(foundMonkey.orElse(null));
+            grid.scrollToIndex(monkeyList.indexOf(foundMonkey.orElse(null)));
+            famInfo = createFamilyView(foundMonkey.orElse(null), monkeyList);
+            searchComp.setFlexGrow(1, famInfo);
+            searchComp.add(famInfo);
+        });
+        HorizontalLayout inside = new HorizontalLayout();
+        inside.add(monkeyIdSelector, search);
+        inside.setVerticalComponentAlignment(Alignment.END, search);
+
+        searchComp.setFlexGrow(1, inside);
+        searchComp.add(inside);
         //layout = new SplitLayout(searchComp);
         add(searchComp, infoPanel, grid);
     }
 
-    private Image createIconImage(MonkeyNode monkey) {
-        Image im = new Image("images/GenderIcons/" + monkey.getIcon(), "Monkey Icon");
-        im.addClassName("monkeyIcon");
-        return im;
+    public Accordion createFamilyView(MonkeyNode monkey, List<MonkeyNode> monkeyList) {
+        List<MonkeyNode> mL = new ArrayList<>();
+        List<MonkeyNode> sL = new ArrayList<>();
+        List<MonkeyNode> cL = new ArrayList<>();
+        for (int i = 0; i < monkeyList.size(); i++) {
+            if (monkeyList.get(i).getMonkey().getSubjectId() == monkey.getMonkey().getMotherId()) {
+                mL.add(monkeyList.get(i));
+            } else if (monkeyList.get(i).getMonkey().getMotherId() == monkey.getMonkey().getMotherId()) {
+                sL.add(monkeyList.get(i));
+            } else if (monkeyList.get(i).getMonkey().getMotherId() == monkey.getMonkey().getSubjectId()) {
+                cL.add(monkeyList.get(i));
+            }
+        }
+
+        Grid<MonkeyNode> motherGrid = new Grid<>();
+        motherGrid.setItems(mL);
+
+        Grid<MonkeyNode> siblingGrid = new Grid<>();
+        siblingGrid.setItems(sL);
+
+        Grid<MonkeyNode> childrenGrid = new Grid<>();
+        childrenGrid.setItems(cL);
+
+        Accordion famView = new Accordion();
+        famView.add("Mother", motherGrid);
+        famView.add("Siblings", siblingGrid);
+        famView.add("Children", childrenGrid);
+        return famView;
     }
 
 }

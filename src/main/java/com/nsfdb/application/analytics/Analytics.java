@@ -31,6 +31,15 @@ public class Analytics {
         this.monkeyList = this.familytree.getMonkeyList();
     }
 
+    public List<String> getMonkeySubjectIds() {
+        List<String> monkeySubIds = new ArrayList<>();
+        for (int i = 0; i < this.monkeyList.size(); i++) {
+            if (this.monkeyList.get(i).getMonkey().getSubjectId() != null) {
+                monkeySubIds.add(this.monkeyList.get(i).getMonkey().getSubjectId());
+            }
+        }
+        return monkeySubIds;
+    }
 
     public List<MonkeyNode> getMonkeys() {
         return this.monkeyList;
