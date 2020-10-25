@@ -1,6 +1,6 @@
 dashboard-view,
 #dashboard-view {
-  display: block;
+  display: flex;
   padding: 1em;
 }
 
@@ -8,10 +8,21 @@ ComboBox {
   width: 50%;
 }
 
-#familyTree {
-  width: 50%;
+#selectedMonkey {
+  text-align: center;
 }
 
+#leftSideLayout {
+  height: 100%;
+}
+
+#rightSideLayout {
+  height: 100%;
+}
+
+#family-info {
+  width: 100%;
+}
 
 .MonkeyIcon {
   width: 10%;

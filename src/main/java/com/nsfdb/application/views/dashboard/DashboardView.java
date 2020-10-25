@@ -54,11 +54,12 @@ public class DashboardView extends HorizontalLayout {
         monkeyIdSelector.setLabel("Select Monkey ID");
 
         HorizontalLayout searchComp = new HorizontalLayout();
-        VerticalLayout infoPanel = new VerticalLayout();
-
+        VerticalLayout leftSide = new VerticalLayout();
+        VerticalLayout rightSide = new VerticalLayout();
+        leftSide.setId("leftSideLayout");
+        rightSide.setId("rightSideLayout");
 
         List<MonkeyNode> monkeyList = data.getMonkeys();
-
         TreeGrid<MonkeyNode> grid = new TreeGrid<>();
 
         grid.setItems(data.getRootMonkies(), data::getChildMonkies);
@@ -68,23 +69,39 @@ public class DashboardView extends HorizontalLayout {
         grid.setId("familyTree");
         grid.setHeightFull();
 
+        grid.addItemClickListener( event -> {
+            MonkeyNode mN = event.getItem();
+            rightSide.removeAll();
+            Optional<MonkeyNode> foundMonkey = monkeyList.stream().filter(monkey -> monkey.getMonkey()
+                    .getSubjectId() == mN.getMonkey().getSubjectId()).findAny();
+            monkeyIdSelector.setValue(foundMonkey.orElse(null).getMonkey().getSubjectId());
+            famInfo = createFamilyView(foundMonkey.orElse(null), monkeyList);
+            famInfo.setId("family-info");
+            Label title = new Label("Monkey ID: " + foundMonkey.orElse(null).getMonkey());
+            title.setId("selectedMonkey");
+            rightSide.add(title, famInfo);
+            rightSide.setHorizontalComponentAlignment(Alignment.CENTER);
+        });
+
         search = new Button("Search", click -> {
+            rightSide.removeAll();
             Optional<MonkeyNode> foundMonkey = monkeyList.stream().filter(monkey -> monkey.getMonkey()
                     .getSubjectId() == monkeyIdSelector.getValue()).findAny();
             grid.asSingleSelect().setValue(foundMonkey.orElse(null));
             grid.scrollToIndex(monkeyList.indexOf(foundMonkey.orElse(null)));
             famInfo = createFamilyView(foundMonkey.orElse(null), monkeyList);
-            searchComp.setFlexGrow(1, famInfo);
-            searchComp.add(famInfo);
+            famInfo.setId("family-info");
+            Label title = new Label("Monkey ID: " + foundMonkey.orElse(null).getMonkey());
+            title.setId("selectedMonkey");
+            rightSide.add(title, famInfo);
+            rightSide.setHorizontalComponentAlignment(Alignment.CENTER);
         });
-        HorizontalLayout inside = new HorizontalLayout();
-        inside.add(monkeyIdSelector, search);
-        inside.setVerticalComponentAlignment(Alignment.END, search);
 
-        searchComp.setFlexGrow(1, inside);
-        searchComp.add(inside);
-        //layout = new SplitLayout(searchComp);
-        add(searchComp, infoPanel, grid);
+        searchComp.add(monkeyIdSelector, search);
+        searchComp.setVerticalComponentAlignment(Alignment.END, search);
+
+        leftSide.add(searchComp, grid);
+        add(leftSide, rightSide);
     }
 
     public Accordion createFamilyView(MonkeyNode monkey, List<MonkeyNode> monkeyList) {
@@ -92,28 +109,49 @@ public class DashboardView extends HorizontalLayout {
         List<MonkeyNode> sL = new ArrayList<>();
         List<MonkeyNode> cL = new ArrayList<>();
         for (int i = 0; i < monkeyList.size(); i++) {
-            if (monkeyList.get(i).getMonkey().getSubjectId() == monkey.getMonkey().getMotherId()) {
+            if (monkeyList.get(i).getMonkey().getSubjectId().equals(monkey.getMonkey().getMotherId())) {
                 mL.add(monkeyList.get(i));
-            } else if (monkeyList.get(i).getMonkey().getMotherId() == monkey.getMonkey().getMotherId()) {
-                sL.add(monkeyList.get(i));
-            } else if (monkeyList.get(i).getMonkey().getMotherId() == monkey.getMonkey().getSubjectId()) {
-                cL.add(monkeyList.get(i));
+            } else if (monkeyList.get(i).getMonkey().getMotherId() != null) {
+                if (monkeyList.get(i).getMonkey().getMotherId().equals(monkey.getMonkey().getMotherId()) &&
+                        !monkeyList.get(i).getMonkey().getSubjectId().equals(monkey.getMonkey().getSubjectId())) {
+                    sL.add(monkeyList.get(i));
+                } else if (monkeyList.get(i).getMonkey().getMotherId().equals(monkey.getMonkey().getSubjectId())) {
+                    cL.add(monkeyList.get(i));
+                }
             }
         }
 
         Grid<MonkeyNode> motherGrid = new Grid<>();
         motherGrid.setItems(mL);
+        Grid.Column<MonkeyNode> motherIDColumn = motherGrid.addColumn(MonkeyNode::getMonkey).setHeader("ID");
+        motherGrid.setHeightByRows(true);
 
         Grid<MonkeyNode> siblingGrid = new Grid<>();
         siblingGrid.setItems(sL);
+        Grid.Column<MonkeyNode> siblingIDColumn = siblingGrid.addColumn(MonkeyNode::getMonkey).setHeader("ID");
+        siblingGrid.setHeightByRows(true);
 
         Grid<MonkeyNode> childrenGrid = new Grid<>();
         childrenGrid.setItems(cL);
+        Grid.Column<MonkeyNode> childrenIDColumn = childrenGrid.addColumn(MonkeyNode::getMonkey).setHeader("ID");
+        childrenGrid.setHeightByRows(true);
 
         Accordion famView = new Accordion();
-        famView.add("Mother", motherGrid);
-        famView.add("Siblings", siblingGrid);
-        famView.add("Children", childrenGrid);
+        if (mL.size() != 0) {
+            famView.add("Mother", motherGrid);
+        } else {
+            famView.add("Mother", new Label("None"));
+        }
+        if (sL.size() != 0) {
+            famView.add("Siblings", siblingGrid);
+        } else {
+            famView.add("Siblings", new Label("None"));
+        }
+        if (cL.size() != 0) {
+            famView.add("Children", childrenGrid);
+        } else {
+            famView.add("Children", new Label("None"));
+        }
         return famView;
     }
 
