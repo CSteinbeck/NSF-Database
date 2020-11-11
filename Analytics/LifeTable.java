@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 public class LifeTable {
     private Statement stmt;
@@ -44,44 +45,65 @@ public class LifeTable {
             int age;
             System.out.print("");
             stmt = dba.getConnection().createStatement();
-            result = stmt.executeQuery(query);
+            result = stmt.executeQuery("EXECUTE dbo.LifeTable");
 
             // get meta data from result and print column labels
             ResultSetMetaData meta = result.getMetaData();
+
             int columns = meta.getColumnCount();
+
             System.out.println(columns);
+
             int j;
             for (j=1; j<columns; j++)
                 System.out.print(meta.getColumnName(j) + ", ");
             System.out.println(meta.getColumnName(j));
 
-            //Column 4 Birth
-            //Column 5 Death
+            ArrayList<ArrayList<Integer>> lifeTable = new ArrayList<>();
 
-            //TODO: fix the null pointer exception in the for loop
+            System.out.println(columns);
+
+            int count = 0;
+            int ltAge = 0;
+            int ltTot = 0;
+
             while (result.next()) {
-                for (int i=1; i<=columns; i++) {
+                lifeTable.add(new ArrayList());
 
-                    int birthYr;
-                    int deathYr;
+                for (int i=1; i<columns; i++) {
+                    ltAge = Integer.parseInt(result.getString(i));
+                    ltTot = Integer.parseInt(result.getString(i + 1));
+                }
 
-                    //If the death year is R, the entry has been removed
-                    //This conditional is causing a null pointer exception
-                    if(!result.getString(5).contains("R")) {
-                        birthYr = Integer.parseInt(result.getString(4));
+                lifeTable.get(count).add(ltAge);
+                lifeTable.get(count).add(ltTot);
 
-                        //Dr. Zhao wants us to make all null values 2013 for death year
-                        if(result.getString(5)!= null)
-                            deathYr = Integer.parseInt(result.getString(5));
+                count++;
+            }
+            //Total value may be useful later. I'll delete if this isn't the case.
+            int totMonkeys = 0;
 
-                        else
-                            deathYr = 2013;
+            for(int i = 0; i < lifeTable.size(); i++)
+                totMonkeys += lifeTable.get(i).get(1);
 
-                        System.out.println(result.getString(4) + "\t" + result.getString(5) + "\t");
-                        age = deathYr - birthYr;
-                        System.out.println(age);
-                    }
-                } }
+            //getting NX is getting the all of the subjects who lived through that age
+            int NX ;
+            for(int i = 0; i < lifeTable.size(); i++)
+            {
+                NX = 0;
+
+                for(int x = i; x < lifeTable.size(); x++)
+                    NX += lifeTable.get(x).get(1);
+
+                lifeTable.get(i).add(NX);
+            }
+
+            //print out the whole thing
+            for(int i = 0; i < lifeTable.size(); i++)
+                System.out.println(lifeTable.get(i));
+
+            System.out.println(totMonkeys);
+
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
