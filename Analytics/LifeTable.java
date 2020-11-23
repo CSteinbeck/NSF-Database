@@ -111,6 +111,9 @@ public class LifeTable {
                 d = lifeTable.get(i).get(2);
                 nx = lifeTable.get(i).get(3);
                 mx = d / nx;
+                //Set the average to the last value in case of divide by zero
+                if(mx == 0.0)
+                    mx = lifeTable.get(i-1).get(4);
                 lifeTable.get(i).add(mx);
             }
 
@@ -147,12 +150,13 @@ public class LifeTable {
             }
 
             //Lx = dx/mx
+            //fix divide by zero
             double Lx;
             for (int i = 0; i < lifeTable.size(); i++) {
-                if (lifeTable.get(i).get(4) != 0.0)
+              //  if (lifeTable.get(i).get(4) != 0.0)
                     Lx = lifeTable.get(i).get(8) / lifeTable.get(i).get(4);
-                else
-                    Lx = 0.8;
+               // else
+                   // Lx = lifeTable.get(i-1).get(9)/2;
                 lifeTable.get(i).add(Lx);
             }
 
