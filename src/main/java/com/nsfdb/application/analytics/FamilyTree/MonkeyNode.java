@@ -113,14 +113,14 @@ public class MonkeyNode {
         switch (this.monkey.getGender()) {
             case "f":
                 if (this.hasChildren()) {
-                    return "monkeyMom.png";
+                    return "MotherMonkey.png";
                 } else {
-                    return "redMonkey.png";
+                    return "FemaleMonkey.png";
                 }
             case "m":
-                return "blueMonkey.png";
+                return "MaleMonkey.png";
             default:
-                return "purpleMonkey.png";
+                return "UnknownGen.png";
         }
     }
 }

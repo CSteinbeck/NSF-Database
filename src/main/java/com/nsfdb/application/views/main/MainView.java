@@ -64,7 +64,7 @@ public class MainView extends AppLayout {
         HorizontalLayout logoLayout = new HorizontalLayout();
         logoLayout.setId("logo");
         logoLayout.setAlignItems(FlexComponent.Alignment.CENTER);
-        logoLayout.add(new Image("images/nsfdbLogo.png", "NSF Monkey DB logo"));
+        logoLayout.add(new Image("images/logo.png", "NSF Monkey DB logo"));
         logoLayout.add(new H1("NSF Monkey DB"));
         layout.add(logoLayout, menu);
         return layout;
