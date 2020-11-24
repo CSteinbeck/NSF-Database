@@ -32,7 +32,6 @@ import com.nsfdb.application.analytics.Monkey;
 @Route(value = "dashboard", layout = MainView.class)
 @PageTitle("Dashboard")
 @CssImport("./styles/views/dashboard/dashboard-view.css")
-@RouteAlias(value = "", layout = MainView.class)
 public class DashboardView extends HorizontalLayout {
 
     private TextField name;

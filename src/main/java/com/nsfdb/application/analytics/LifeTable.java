@@ -1,6 +1,8 @@
-//This is mostly re-purposed code from SelectTest.java
+package com.nsfdb.application.analytics;//This is mostly re-purposed code from SelectTest.java
 //TODO: create a LifeTable object to store birth year, death year, and age
 //TODO: choose a data structure to make a table with. Considering a 2d array at the moment
+
+import com.nsfdb.application.analytics.SqlServerDbAccessor;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -13,10 +15,10 @@ import static java.lang.Math.exp;
 
 public class LifeTable {
     private Statement stmt;
-    private analytics.SqlServerDbAccessor dba;
+    private SqlServerDbAccessor dba;
 
     public LifeTable() {
-        dba = new analytics.SqlServerDbAccessor();
+        dba = new SqlServerDbAccessor();
         dba.setDbName("CayoSantiagoRhesusDB"); // use for default database
         //dba.setDbName("KerryO"); // use this line for Kerry's database
         dba.connectToDb();
