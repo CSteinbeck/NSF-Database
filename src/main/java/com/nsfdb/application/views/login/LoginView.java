@@ -2,6 +2,7 @@ package com.nsfdb.application.views.login;
 
 import com.nsfdb.application.analytics.SqlServerDbAccessor;
 import com.nsfdb.application.views.main.MainView;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.login.AbstractLogin;
@@ -26,7 +27,7 @@ import java.sql.Statement;
 @Route(value = "login")
 @PageTitle("Login")
 @CssImport("./styles/views/dashboard/dashboard-view.css")
-@RouteAlias(value = "", layout = MainView.class)
+@RouteAlias(value = "")
 public class LoginView extends VerticalLayout {
     private String username;
     private String password;
@@ -60,10 +61,7 @@ public class LoginView extends VerticalLayout {
     }
 
     private void navigateToMainPage() {
-        System.out.println(accessLevel);
-        Button button = new Button("Click me",
-                event -> Notification.show("Yay!"));
-        add(button);
+        UI.getCurrent().navigate("dashboard");
     }
 
     private boolean authenticate(AbstractLogin.LoginEvent e) {
@@ -71,8 +69,8 @@ public class LoginView extends VerticalLayout {
         username = e.getUsername();
         password = e.getPassword();
         accessLevel = "0";
-        System.out.println(username);
-        System.out.println(password);
+        //System.out.println(username);
+        //System.out.println(password);
 
         if(loginCredentials(username, password, accessLevel) == true){
             return true;
@@ -93,23 +91,23 @@ public class LoginView extends VerticalLayout {
         return accessLevel;
     }
 
-    public static boolean loginCredentials(String username, String password, String accessLevel){
+    private boolean loginCredentials(String username, String password, String accessLevel){
         SqlServerDbAccessor dba = new SqlServerDbAccessor("csdata.cd4sevot432y.us-east-1.rds.amazonaws.com",
                 "administrator", "MercerBear$2020", "NSF_480");
         dba.setDbName("NSF_480");
         dba.connectToDb();
         String sql = ("SELECT * FROM Users WHERE UserName = '"+username+"' AND UserPassword = '"+password+"'");
-        System.out.println(sql);
+        //System.out.println(sql);
         try {
             Statement stmt = dba.getConnection().createStatement();
             ResultSet rs = stmt.executeQuery(sql);
             if (rs.next() == false) {
-                System.out.println("boo 1");
+                //System.out.println("boo 1");
                 return false;
             }
             else {
                 accessLevel = rs.getString("AccessLevel");
-                System.out.println("yay");
+                //System.out.println(accessLevel);
                 return true;
             }
         }
