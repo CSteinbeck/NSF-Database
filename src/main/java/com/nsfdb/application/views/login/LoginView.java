@@ -29,9 +29,9 @@ import java.sql.Statement;
 @CssImport("./styles/views/dashboard/dashboard-view.css")
 @RouteAlias(value = "")
 public class LoginView extends VerticalLayout {
-    private String username;
-    private String password;
-    private String accessLevel;
+    private static String username;
+    private static String password;
+    private static String accessLevel;
     private LoginI18n li;
     //private SqlServerDbAccessor dba;
 
@@ -43,6 +43,7 @@ public class LoginView extends VerticalLayout {
         component.addLoginListener(e -> {
             boolean isAuthenticated = authenticate(e);
             if (isAuthenticated == true) {
+                //System.out.println(getAccessLevel());
                 navigateToMainPage();
             } else {
                 component.setError(true);
