@@ -39,12 +39,12 @@ public class BarChartEx extends JFrame {
     private CategoryDataset createDataset() {
 
     	DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        dataset.setValue(46, "Gold medals", "USA");
-        dataset.setValue(38, "Gold medals", "China");
-        dataset.setValue(29, "Gold medals", "UK");
-        dataset.setValue(22, "Gold medals", "Russia");
-        dataset.setValue(13, "Gold medals", "South Korea");
-        dataset.setValue(11, "Gold medals", "Germany");
+        dataset.setValue(11, "Children", "Gen 1");
+        dataset.setValue(13, "Children", "Gen 2");
+        dataset.setValue(22, "Children", "Gen 3");
+        dataset.setValue(29, "Children", "Gen 4");
+        dataset.setValue(33, "Children", "Gen 5");
+        dataset.setValue(46, "Children", "Gen 6");
 
         return dataset;
     }
@@ -52,9 +52,9 @@ public class BarChartEx extends JFrame {
     private JFreeChart createChart(CategoryDataset dataset) {
 
         JFreeChart barChart = ChartFactory.createBarChart(
-                "Olympic gold medals in London",
+                "Children per generation",
                 "",
-                "Gold medals",
+                "Children",
                 dataset,
                 PlotOrientation.VERTICAL,
                 false, true, false);
