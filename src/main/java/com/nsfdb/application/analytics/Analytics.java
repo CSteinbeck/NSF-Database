@@ -20,22 +20,17 @@ public class Analytics {
     private SqlServerDbAccessor dba;
     private FamilyTree familytree;
     private List<MonkeyNode> monkeyList;
-    // TODO: add lifetable object to the analytics class
 
     public Analytics( String dbName )
     {
-        // this DB connection can be shared by all backend pieces except the lifetable at the moment
         this.dba = new SqlServerDbAccessor();
         this.dba.setDbName(dbName);
         this.dba.getConnection();
 
-        // build the family tree and subject list from the dba
         this.familytree = new FamilyTree(dbName, "CSRhesusSubject", "1");
         this.monkeyList = this.familytree.getMonkeyList();
-        // TODO: add lifetable constructor to the analytics branch and use the same dba
     }
 
-    // Returns a list of all subject id's
     public List<String> getMonkeySubjectIds() {
         List<String> monkeySubIds = new ArrayList<>();
         for (int i = 0; i < this.monkeyList.size(); i++) {
@@ -46,12 +41,10 @@ public class Analytics {
         return monkeySubIds;
     }
 
-    // monkey list getter
     public List<MonkeyNode> getMonkeys() {
         return this.monkeyList;
     }
 
-    // Returns a list of all monkeys with null root (ie, first gen mothers)
     public List<MonkeyNode> getRootMonkies() {
         List<MonkeyNode> rootMonkeys = new ArrayList<>();
         for (int i = 0; i < this.monkeyList.size(); i++) {
@@ -62,8 +55,7 @@ public class Analytics {
         return rootMonkeys;
     }
 
-    // get the children list of a given parent monkey
-    public List<MonkeyNode> getChildMonkies(MonkeyNode parent) {
+    public List<MonkeyNode> fetchChildren(MonkeyNode parent) {
         return parent.getChildren();
     }
 

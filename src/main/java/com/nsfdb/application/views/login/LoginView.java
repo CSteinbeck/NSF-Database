@@ -1,6 +1,9 @@
 package com.nsfdb.application.views.login;
 
+import com.nsfdb.application.analytics.Analytics;
 import com.nsfdb.application.analytics.SqlServerDbAccessor;
+import com.nsfdb.application.views.data.User;
+import com.nsfdb.application.views.data.UserSession;
 import com.nsfdb.application.views.main.MainView;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -14,6 +17,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.RouteAlias;
 import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinService;
 
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -33,21 +37,27 @@ public class LoginView extends VerticalLayout {
     private static String password;
     private static String accessLevel;
     private LoginI18n li;
+    private Analytics data;
     //private SqlServerDbAccessor dba;
 
     public LoginView() {
 
+        data = new Analytics("CayoSantiagoRhesusDB");
         li = LoginI18n.createDefault();
         LoginForm component = new LoginForm();
         component.setI18n(li);
         component.addLoginListener(e -> {
             boolean isAuthenticated = authenticate(e);
             if (isAuthenticated == true) {
-                //System.out.println(getAccessLevel());
                 navigateToMainPage();
             } else {
                 component.setError(true);
             }
+        });
+
+        Button guestLogin = new Button("Login as Guest", event -> {
+            //Set user to Robbie Reader
+            navigateToMainPage();
         });
         // The login button is disabled when clicked to prevent multiple submissions.
         // To restore it, call component.setEnabled(true)
@@ -57,11 +67,14 @@ public class LoginView extends VerticalLayout {
         // Setting error to true also enables the login button.
         Button showError = new Button("Show error",
                 event -> component.setError(true));
-        add(component, restoreLogin, showError);
+        add(component, guestLogin, restoreLogin, showError);
         add(component);
     }
 
     private void navigateToMainPage() {
+        User u = new User(getUsername(), getAccessLevel());
+        UserSession session = new UserSession(u, data);
+        VaadinService.getCurrentRequest().getWrappedSession().setAttribute("userSession", session);
         UI.getCurrent().navigate("dashboard");
     }
 

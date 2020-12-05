@@ -2,6 +2,7 @@ package com.nsfdb.application.views.main;
 
 import java.util.Optional;
 
+import com.nsfdb.application.analytics.Analytics;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.component.applayout.AppLayout;
@@ -21,6 +22,7 @@ import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.PWA;
 import com.nsfdb.application.views.dashboard.DashboardView;
 import com.nsfdb.application.views.about.AboutView;
+import com.vaadin.flow.server.VaadinService;
 
 /**
  * The main view is a top-level placeholder for other views.
