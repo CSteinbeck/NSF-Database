@@ -1,7 +1,8 @@
 /*  FamilyTree Class
-    Private variables: root
-    Private methods  : n/a
-    Public methods   : printTree()
+    Private variables: root, MonkeyList
+    Private methods  : getAllMonkeys - creates a master list of subject entries
+    Public methods   : printTree     - used for testing, calls the print method of the root monkey node
+                       getMonkeyList - getter for the MonkeyList
 
     This class is a client-side class for the FamilyTree. It has the root MonkeyNode
     and all methods which the GUI team will use to access the tree.

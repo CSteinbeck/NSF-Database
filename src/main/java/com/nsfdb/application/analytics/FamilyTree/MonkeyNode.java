@@ -1,8 +1,15 @@
 /*  MonkeyNode Class
-    Private Variables: Monkey monkey,
-                       ArrayList<MonkeyNode> children
-    Private Methods  : buildChildrenList
-    Public Methods   : many lmao
+    Private Variables: Monkey monkey                  - the actual subject entry
+                       ArrayList<MonkeyNode> children - the list of children
+
+    Private Methods  : buildChildrenList - called by constructor, queries the sql server for all
+                                         - children of this monkey and adds them to the children list
+
+    Public Methods   : getters         - for the monkey and children list
+                       printMonkeyNode - used for testing, prints the monkey subject id with tabs indicating gen number
+                       childrenCount   - returns the size of children list
+                       hasChildren     - returns (this.childrenCount > 0)
+                       getIcon         - determines which icon to give the node in the GUI (mother, female (no kids), male)
 
     This class is the engine of the family tree. Each node has a monkey and a list of children nodes.
  */
@@ -27,35 +34,33 @@ public class MonkeyNode {
     // Takes a dba, name of the database table, and monkey SequenceId
     public MonkeyNode(SqlServerDbAccessor dba, String table, String id)
     {
-        this.monkey = new Monkey(dba, table, id);
+        this.monkey = new Monkey(dba, table, id); // initialize the monkey
         this.children = new ArrayList<MonkeyNode> ();
-        buildChildrenList(dba, table);
+        buildChildrenList(dba, table); // build the children list
     }
 
     // Use this constructor if you have a Monkey object instantiated externally
     public MonkeyNode(SqlServerDbAccessor dba, String table, Monkey monkey )
     {
-        this.monkey = monkey;
+        this.monkey = monkey; // initialize the monkey
         this.children = new ArrayList<MonkeyNode>();
-        buildChildrenList(dba, table);
+        buildChildrenList(dba, table); // build the children list
     }
 
-    //
+    // This method queries the database for all children of the given monkey node.
+    // Then, it builds a monkey node for each child and appends them to the list.
+    // Note that the monkey node constructor calls this method, thus one constructor
+    // call for the root monkey node creates the entire tree.
     private void buildChildrenList( SqlServerDbAccessor dba, String table )
     {
-        String[] DbCols = {"*"};
-        String query = "SELECT ";
-        int index = 1;
-        for (String col : DbCols) {
-            query += col;
-            if (index++ < DbCols.length)
-                query += ", ";
-        }
-        query += " FROM " + table + " WHERE MotherId='" + this.monkey.getSubjectId() + "'";
+        // The query selects all children of the current monkey
+        String query = "SELECT * FROM " + table + " WHERE MotherId='" + this.monkey.getSubjectId() + "'";
 
         try {
             Statement stmt = dba.getConnection().createStatement();
             ResultSet result = stmt.executeQuery(query);
+
+            // after the query executes, we have a list of results. Loop through them and make nodes of each
             while (result.next()) {
                 MonkeyNode child = new MonkeyNode(dba, table, new Monkey(result));
                 this.children.add(child);
@@ -65,6 +70,8 @@ public class MonkeyNode {
         }
     }
 
+    // Used for testing, called by the FamilyTree print method.
+    // Recursively prints each node in the tree
     public void printMonkeyNode( int gen )
     {
         for (int i = 0; i < gen; i++)

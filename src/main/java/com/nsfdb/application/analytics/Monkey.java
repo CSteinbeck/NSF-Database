@@ -1,6 +1,5 @@
 /*  Monkey Class
     Each object of this class holds all of the data for a monkey.
-    Use this if you're tired of querying for everything.
  */
 
 package com.nsfdb.application.analytics;
@@ -28,24 +27,18 @@ public class Monkey
     // id = sequence id of the monkey
     public Monkey( String DbName, String table, String id )
     {
+        // declare a dba and get connection to server
         SqlServerDbAccessor dba = new SqlServerDbAccessor();
         dba.setDbName(DbName);
         dba.connectToDb();
 
-        String[] DbCols = {"*"};
-        String query = "SELECT ";
-        int index = 1;
-        for (String col : DbCols) {
-            query += col;
-            if (index++ < DbCols.length)
-                query += ", ";
-        }
-        query += " FROM " + table + " WHERE SequenceId='" + id + "'";
+        String query = "SELECT * FROM " + table + " WHERE SequenceId='" + id + "'";
 
         try {
             Statement stmt = dba.getConnection().createStatement();
             ResultSet result = stmt.executeQuery(query);
 
+            // Initialize each of this monkeys properties from the query result
             result.next();
             this.SequenceId = result.getString(1);
             this.SubjectId = result.getString(2);
@@ -60,25 +53,18 @@ public class Monkey
         }
     }
 
-    // Use this constructor if you've externally declared your database accessor object like a good boy
+    // Use this constructor if you've externally declared your database accessor object
     // table = name of table ie. "CSRhesusSubject"
     // id = sequence id of monkey you want to make
     public Monkey(SqlServerDbAccessor dba, String table, String id )
     {
-        String[] DbCols = {"*"};
-        String query = "SELECT ";
-        int index = 1;
-        for (String col : DbCols) {
-            query += col;
-            if (index++ < DbCols.length)
-                query += ", ";
-        }
-        query += " FROM " + table + " WHERE SequenceId='" + id + "'";
+        String query = "SELECT * FROM " + table + " WHERE SequenceId='" + id + "'";
 
         try {
             Statement stmt = dba.getConnection().createStatement();
             ResultSet result = stmt.executeQuery(query);
 
+            // Initialize this monkey's values from the query result
             result.next();
             this.SequenceId = result.getString(1);
             this.SubjectId = result.getString(2);
@@ -98,7 +84,6 @@ public class Monkey
     public Monkey( ResultSet result )
     {
         try {
-            //result.next();
             this.SequenceId = result.getString(1);
             this.SubjectId = result.getString(2);
             this.Gender = result.getString(3);
