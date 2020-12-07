@@ -1,13 +1,8 @@
-//This is mostly re-purposed code from SelectTest.java
-//TODO: create a LifeTable object to store birth year, death year, and age
-//TODO: choose a data structure to make a table with. Considering a 2d array at the moment
-
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.lang.Math;
 
 import static java.lang.Math.exp;
 
@@ -18,9 +13,7 @@ public class LifeTable {
     public LifeTable() {
         dba = new analytics.SqlServerDbAccessor();
         dba.setDbName("CayoSantiagoRhesusDB"); // use for default database
-        //dba.setDbName("KerryO"); // use this line for Kerry's database
         dba.connectToDb();
-        //stmt = dba.getStmt();
     }
 
     public static void main(String[] args) {
@@ -28,8 +21,8 @@ public class LifeTable {
         String[] cols = {"*"};
         lt.createLifeTable("CSRhesusSubject", cols); // use if using default db
 
+        //Create and print life table
         ArrayList<ArrayList<Double>> lifeTable = lt.createLifeTable("CSRhesusSubject", cols);
-        //print life table
         printLifeTable(lifeTable);
     }
 
@@ -131,8 +124,8 @@ public class LifeTable {
                 lifeTable.get(i).add(px);
             }
 
-            //lx starts at 1
-            //lx = (previous rows) lx * px
+            //Ix starts at 1
+            //Ix = (previous rows) lx * px
             double Ix = 1;
             for (int i = 0; i < lifeTable.size(); i++) {
                 if (i == 0)
@@ -153,10 +146,7 @@ public class LifeTable {
             //fix divide by zero
             double Lx;
             for (int i = 0; i < lifeTable.size(); i++) {
-              //  if (lifeTable.get(i).get(4) != 0.0)
-                    Lx = lifeTable.get(i).get(8) / lifeTable.get(i).get(4);
-               // else
-                   // Lx = lifeTable.get(i-1).get(9)/2;
+                Lx = lifeTable.get(i).get(8) / lifeTable.get(i).get(4);
                 lifeTable.get(i).add(Lx);
             }
 
@@ -180,9 +170,8 @@ public class LifeTable {
                     Ex = 0;
                 lifeTable.get(i).add(Ex);
             }
-
-        } catch (SQLException e) {
-            // TODO Auto-generated catch block
+        }
+        catch (SQLException e) {
             e.printStackTrace();
         }
 
