@@ -1,0 +1,5 @@
+#cell img {
+    height: var(--lumo-size-s);
+    overflow: hidden;
+    background-color: white;
+}

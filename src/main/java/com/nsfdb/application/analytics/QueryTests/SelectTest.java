@@ -1,9 +1,15 @@
-package csdbdao;
+// Prints the info for all Rhesus monkeys.
+// Can be edited to print Macaca monkeys. 
+
+package com.nsfdb.application.analytics.QueryTests;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import com.nsfdb.application.analytics.SqlServerDbAccessor;
+import com.nsfdb.application.analytics.Monkey;
+import com.nsfdb.application.analytics.FamilyTree.*;
 
 public class SelectTest {
 	private Statement stmt;
@@ -11,18 +17,21 @@ public class SelectTest {
 	
 	public SelectTest() {
 		dba = new SqlServerDbAccessor();
-		dba.setDbName("CayoSantiagoRhesusDB");
+		dba.setDbName("CayoSantiagoRhesusDB"); // use for default database
+		//dba.setDbName("KerryO"); // use this line for Kerry's database
 		dba.connectToDb();
-//		stmt = dba.getStmt();
+		//stmt = dba.getStmt();
 	}
 
 	public static void main(String[] args) {
 		SelectTest test = new SelectTest();
 
-//		String[] cols = {"SequenceId", "OriginalSubjectId", "Gender", "BirthYear"};
-		String[] cols = {"SequenceId", "OriginalSubjectId", "Gender", "BirthYear", "DeathYear", "MotherId", "Generation", "FamilyId"};
-//		String[] cols = {"*"};
-		test.selectColumnsFromTable("CSRhesusSubject", cols);
+		//String[] cols = {"OriginalSubjectId", "MotherId"};
+		//String[] cols = {"SequenceId", "OriginalSubjectId", "Gender", "BirthYear", "DeathYear", "MotherId", "Generation", "FamilyId"};
+		String[] cols = {"*"};
+		test.selectColumnsFromTable("CSRhesusSubject", cols); // use if using default db
+		//test.selectColumnsFromTable("MacacaSubject", cols); // use if using Kerry's db
+			
 	}
 
 	private void selectColumnsFromTable(String table, String[] cols) {
@@ -47,8 +56,7 @@ public class SelectTest {
 			System.out.println(columns);            
 			int j;            
 			for (j=1; j<columns; j++)                
-				System.out.print(meta.getColumnName(j) + ", ");            
-			
+				System.out.print(meta.getColumnName(j) + ", ");
 			System.out.println(meta.getColumnName(j));            
 
 			while (result.next()) {
