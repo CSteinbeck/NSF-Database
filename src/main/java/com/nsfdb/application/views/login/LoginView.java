@@ -1,6 +1,7 @@
 package com.nsfdb.application.views.login;
 
 import com.nsfdb.application.analytics.Analytics;
+import com.nsfdb.application.analytics.LifeTable;
 import com.nsfdb.application.analytics.SqlServerDbAccessor;
 import com.nsfdb.application.views.data.User;
 import com.nsfdb.application.views.data.UserSession;
@@ -8,6 +9,7 @@ import com.nsfdb.application.views.main.MainView;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.login.AbstractLogin;
 import com.vaadin.flow.component.login.LoginForm;
 import com.vaadin.flow.component.login.LoginI18n;
@@ -38,11 +40,11 @@ public class LoginView extends VerticalLayout {
     private static String accessLevel;
     private LoginI18n li;
     private Analytics data;
+    private LifeTable lifeTable;
     //private SqlServerDbAccessor dba;
 
     public LoginView() {
-
-        data = new Analytics("CayoSantiagoRhesusDB");
+        setSizeFull();
         li = LoginI18n.createDefault();
         LoginForm component = new LoginForm();
         component.setI18n(li);
@@ -57,6 +59,8 @@ public class LoginView extends VerticalLayout {
 
         Button guestLogin = new Button("Login as Guest", event -> {
             //Set user to Robbie Reader
+            setUsername("RobbieReader");
+            setAccessLevel("1");
             navigateToMainPage();
         });
         // The login button is disabled when clicked to prevent multiple submissions.
@@ -67,13 +71,21 @@ public class LoginView extends VerticalLayout {
         // Setting error to true also enables the login button.
         Button showError = new Button("Show error",
                 event -> component.setError(true));
-        add(component, guestLogin, restoreLogin, showError);
-        add(component);
+        setAlignItems(Alignment.CENTER);
+        setJustifyContentMode(JustifyContentMode.CENTER);
+        setHorizontalComponentAlignment(Alignment.CENTER);
+
+        Image logo = new Image("images/logo.png", "NSF Monkey DB logo");
+        logo.setWidth("250px");
+        logo.setHeight("250px");
+        add(logo, component, guestLogin);
     }
 
     private void navigateToMainPage() {
+        data = new Analytics("CayoSantiagoRhesusDB");
+        lifeTable = new LifeTable();
         User u = new User(getUsername(), getAccessLevel());
-        UserSession session = new UserSession(u, data);
+        UserSession session = new UserSession(u, data, lifeTable);
         VaadinService.getCurrentRequest().getWrappedSession().setAttribute("userSession", session);
         UI.getCurrent().navigate("dashboard");
     }
@@ -95,6 +107,14 @@ public class LoginView extends VerticalLayout {
 
     public String getUsername(){
         return username;
+    }
+
+    public static void setUsername(String username) {
+        LoginView.username = username;
+    }
+
+    public static void setAccessLevel(String accessLevel) {
+        LoginView.accessLevel = accessLevel;
     }
 
     public String getPassword(){

@@ -13,6 +13,13 @@ public class User {
     public User(String uN, String aL) {
         this.userName = uN;
         this.accessLevel = aL;
+        if (aL == "4") {
+            this.userRole = "Editor";
+        } else if (aL == "5") {
+            this.userRole = "Administrator";
+        } else {
+            this.userRole = "Guest";
+        }
     }
     public User(String fN, String lN, String uN, String aL, String uR) {
         this.firstName = fN;

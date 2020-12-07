@@ -41,19 +41,20 @@ public class DashboardView extends HorizontalLayout {
     private ComboBox<String> monkeyIdSelector;
     private SplitLayout layout;
     private ImmediateFamilyAccordion famInfo;
+    private UserSession session = (UserSession) VaadinService.getCurrentRequest().getWrappedSession().getAttribute("userSession");
 
     public DashboardView() {
 
         setId("dashboard-view");
         Label monkeyInfo = new Label();
         Label columns = new Label();
-        UserSession uS = (UserSession) VaadinService.getCurrentRequest().getWrappedSession().getAttribute("userSession");
-        Analytics data = uS.getData();
+        Analytics data = session.getData();
         setSizeFull();
 
         monkeyIdSelector = new ComboBox<>();
         monkeyIdSelector.setItems(data.getMonkeySubjectIds());
         monkeyIdSelector.setLabel("Select Monkey ID");
+        monkeyIdSelector.setTabIndex(0);
 
         HorizontalLayout searchComp = new HorizontalLayout();
         VerticalLayout leftSide = new VerticalLayout();
@@ -74,23 +75,30 @@ public class DashboardView extends HorizontalLayout {
         grid.addItemClickListener( event -> {
             MonkeyNode mN = event.getItem();
             rightSide.removeAll();
-            Optional<MonkeyNode> foundMonkey = monkeyList.stream().filter(monkey -> monkey.getMonkey()
-                    .getSubjectId() == mN.getMonkey().getSubjectId()).findAny();
-            monkeyIdSelector.setValue(foundMonkey.orElse(null).getMonkey().getSubjectId());
-            famInfo = new ImmediateFamilyAccordion(foundMonkey.orElse(null), monkeyList);
-            famInfo.setId("family-info");
-            Label title = new Label("Monkey ID: " + foundMonkey.orElse(null).getMonkey());
-            title.setId("selectedMonkey");
-            rightSide.add(title, famInfo, new BoneCharacteristicsView(), new BoneImagesView());
-            rightSide.setHorizontalComponentAlignment(Alignment.CENTER);
+            for (int i = 0; i < monkeyList.size(); i++) {
+                MonkeyNode foundMonkey = monkeyList.get(i);
+                if (foundMonkey.equals(mN)) {
+                    monkeyIdSelector.setValue(foundMonkey.getMonkey().getSubjectId());
+                    session.setCurrentMonkey(foundMonkey);
+                    famInfo = new ImmediateFamilyAccordion(foundMonkey, monkeyList);
+                    famInfo.setId("family-info");
+                    Label title = new Label("Monkey ID: " + foundMonkey.getMonkey());
+                    title.setId("selectedMonkey");
+                    rightSide.add(title, famInfo, new BoneCharacteristicsView(), new BoneImagesView());
+                    rightSide.setHorizontalComponentAlignment(Alignment.CENTER);
+                }
+            }
         });
 
         search = new Button("Search", click -> {
             rightSide.removeAll();
             Optional<MonkeyNode> foundMonkey = monkeyList.stream().filter(monkey -> monkey.getMonkey()
                     .getSubjectId() == monkeyIdSelector.getValue()).findAny();
+            System.out.println(monkeyIdSelector.getValue());
+            System.out.println(foundMonkey);
             grid.asSingleSelect().setValue(foundMonkey.orElse(null));
             grid.scrollToIndex(monkeyList.indexOf(foundMonkey.orElse(null)));
+            session.setCurrentMonkey(foundMonkey.get());
             famInfo = new ImmediateFamilyAccordion(foundMonkey.orElse(null), monkeyList);
             famInfo.setId("family-info");
             Label title = new Label("Monkey ID: " + foundMonkey.orElse(null).getMonkey());
@@ -104,8 +112,15 @@ public class DashboardView extends HorizontalLayout {
 
         leftSide.add(searchComp, grid);
         add(leftSide, rightSide);
+
+        MonkeyNode currentMonkey = session.getCurrentMonkey();
+        grid.select(currentMonkey);
+        monkeyIdSelector.setValue(currentMonkey.getMonkey().getSubjectId());
+        famInfo = new ImmediateFamilyAccordion(currentMonkey, monkeyList);
+        famInfo.setId("family-info");
+        Label title = new Label("Monkey ID: " + currentMonkey.getMonkey());
+        title.setId("selectedMonkey");
+        rightSide.add(title, famInfo, new BoneCharacteristicsView(), new BoneImagesView());
+        rightSide.setHorizontalComponentAlignment(Alignment.CENTER);
     }
-
-
-
 }

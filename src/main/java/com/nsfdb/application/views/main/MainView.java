@@ -1,16 +1,21 @@
 package com.nsfdb.application.views.main;
 
+import java.awt.color.ProfileDataException;
 import java.util.Optional;
 
-import com.nsfdb.application.analytics.Analytics;
+import com.nsfdb.application.views.data.UserSession;
+import com.nsfdb.application.views.profile.ProfileView;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentUtil;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -21,8 +26,12 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.PWA;
 import com.nsfdb.application.views.dashboard.DashboardView;
-import com.nsfdb.application.views.about.AboutView;
+import com.nsfdb.application.views.visualAnalysis.VisualAnalysis;
 import com.vaadin.flow.server.VaadinService;
+import org.vaadin.erik.SlideMode;
+import org.vaadin.erik.SlideTab;
+import org.vaadin.erik.SlideTabBuilder;
+import org.vaadin.erik.SlideTabPosition;
 
 /**
  * The main view is a top-level placeholder for other views.
@@ -34,9 +43,10 @@ public class MainView extends AppLayout {
 
     private final Tabs menu;
     private H1 viewTitle;
+    private UserSession session = (UserSession) VaadinService.getCurrentRequest().getWrappedSession().getAttribute("userSession");
 
     public MainView() {
-        setPrimarySection(Section.DRAWER);
+        setPrimarySection(Section.NAVBAR);
         addToNavbar(true, createHeaderContent());
         menu = createMenu();
         addToDrawer(createDrawerContent(menu));
@@ -52,7 +62,15 @@ public class MainView extends AppLayout {
         layout.add(new DrawerToggle());
         viewTitle = new H1();
         layout.add(viewTitle);
-        layout.add(new Image("images/user.svg", "Avatar"));
+        SlideTabBuilder sb = new SlideTabBuilder(createProfileView())
+                .mode(SlideMode.RIGHT)
+                .tabPosition(SlideTabPosition.BEGINNING);
+        SlideTab profileView = new ProfileView(sb);
+        profileView.setId("profile-tab");
+        profileView.setExpandComponent(createProfileLogo());
+        profileView.setCollapseComponent(createProfileLogo());
+        layout.add(createProfileLogo());
+        layout.add(profileView);
         return layout;
     }
 
@@ -81,10 +99,18 @@ public class MainView extends AppLayout {
         return tabs;
     }
 
+    private HorizontalLayout createProfileView() {
+        HorizontalLayout name = new HorizontalLayout();
+        name.add(new Label(session.getUser().getUserName()), new Label(session.getUser().getUserRole()));
+        name.setId("name-layout");
+        name.add(new Button("Logout"));
+        return name;
+    }
+
     private Component[] createMenuItems() {
         return new Tab[] {
             createTab("Dashboard", DashboardView.class),
-            createTab("Add/Edit Family", AboutView.class)
+            createTab("Visual Analysis", VisualAnalysis.class)
         };
     }
 
@@ -107,6 +133,11 @@ public class MainView extends AppLayout {
                 .filter(tab -> ComponentUtil.getData(tab, Class.class)
                         .equals(component.getClass()))
                 .findFirst().map(Tab.class::cast);
+    }
+
+    private Image createProfileLogo() {
+        Image im = new Image("images/user.svg", "Avatar");
+        return im;
     }
 
     private String getCurrentPageTitle() {

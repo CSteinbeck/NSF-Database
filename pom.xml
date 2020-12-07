@@ -136,6 +136,21 @@
             <artifactId>mssql-jdbc</artifactId>
             <version>8.4.1.jre11</version>
         </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20201115</version>
+        </dependency>
+        <dependency>
+            <groupId>org.vaadin.erik</groupId>
+            <artifactId>slidetab</artifactId>
+            <version>2.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.vaadin.addons</groupId>
+            <artifactId>chart-library-for-vaadin-flow-14</artifactId>
+            <version>0.5.2</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -169,6 +184,14 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>9</source>
+                    <target>9</target>
+                </configuration>
             </plugin>
         </plugins>
     </build>

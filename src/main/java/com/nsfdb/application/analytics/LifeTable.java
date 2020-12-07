@@ -4,6 +4,7 @@ package com.nsfdb.application.analytics;//This is mostly re-purposed code from S
 
 import com.nsfdb.application.analytics.SqlServerDbAccessor;
 
+import java.lang.reflect.Array;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -14,27 +15,29 @@ import java.lang.Math;
 import static java.lang.Math.exp;
 
 public class LifeTable {
+
     private Statement stmt;
     private SqlServerDbAccessor dba;
+    private ArrayList< ArrayList <Double> > lifeTable;
+    private String[] columns;
 
     public LifeTable() {
         dba = new SqlServerDbAccessor();
         dba.setDbName("CayoSantiagoRhesusDB"); // use for default database
-        //dba.setDbName("KerryO"); // use this line for Kerry's database
         dba.connectToDb();
-        //stmt = dba.getStmt();
-    }
-
-    public static void main(String[] args) {
-        LifeTable lt = new LifeTable();
+        columns = new String[]{ "Age", "Total", "Deaths", "Nx", "Mx",
+                "Qx", "Px", "Ix", "Dx", "Lx", "Tx", "Ex"};
         String[] cols = {"*"};
-        lt.createLifeTable("CSRhesusSubject", cols); // use if using default db
-
-        ArrayList<ArrayList<Double>> lifeTable = lt.createLifeTable("CSRhesusSubject", cols);
-        //print life table
-        printLifeTable(lifeTable);
+        lifeTable = createLifeTable("CSRhesusSubject", cols);
     }
 
+    public ArrayList<ArrayList<Double>> getLifeTableData() {
+        return lifeTable;
+    }
+
+    public String[] getColumns() {
+        return columns;
+    }
 
     private ArrayList<ArrayList<Double>> createLifeTable(String table, String[] cols) {
         ArrayList<ArrayList<Double>> lifeTable = new ArrayList<>();
@@ -113,6 +116,9 @@ public class LifeTable {
                 d = lifeTable.get(i).get(2);
                 nx = lifeTable.get(i).get(3);
                 mx = d / nx;
+                //Set the average to the last value in case of divide by zero
+                if(mx == 0.0)
+                    mx = lifeTable.get(i-1).get(4);
                 lifeTable.get(i).add(mx);
             }
 
@@ -130,8 +136,8 @@ public class LifeTable {
                 lifeTable.get(i).add(px);
             }
 
-            //lx starts at 1
-            //lx = (previous rows) lx * px
+            //Ix starts at 1
+            //Ix = (previous rows) lx * px
             double Ix = 1;
             for (int i = 0; i < lifeTable.size(); i++) {
                 if (i == 0)
@@ -149,12 +155,10 @@ public class LifeTable {
             }
 
             //Lx = dx/mx
+            //fix divide by zero
             double Lx;
             for (int i = 0; i < lifeTable.size(); i++) {
-                if (lifeTable.get(i).get(4) != 0.0)
-                    Lx = lifeTable.get(i).get(8) / lifeTable.get(i).get(4);
-                else
-                    Lx = 0.8;
+                Lx = lifeTable.get(i).get(8) / lifeTable.get(i).get(4);
                 lifeTable.get(i).add(Lx);
             }
 
@@ -178,16 +182,15 @@ public class LifeTable {
                     Ex = 0;
                 lifeTable.get(i).add(Ex);
             }
-
-        } catch (SQLException e) {
-            // TODO Auto-generated catch block
+        }
+        catch (SQLException e) {
             e.printStackTrace();
         }
 
         return lifeTable;
     }
 
-    private static void printLifeTable(ArrayList<ArrayList<Double>> lifeTable)
+    public static void printLifeTable(ArrayList<ArrayList<Double>> lifeTable)
     {
         String columns [] = {"Age", "Total", "Deaths", "NX", "mx", "qx", "px", "Ix", "dx", "Lx", "Tx", "Ex"};
         for(int i = 0; i < columns.length; i++)

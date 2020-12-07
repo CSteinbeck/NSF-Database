@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Objects;
+
 import com.nsfdb.application.analytics.SqlServerDbAccessor;
 import com.nsfdb.application.analytics.Monkey;
 import com.nsfdb.application.analytics.FamilyTree.*;
@@ -45,6 +47,19 @@ public class MonkeyNode {
         this.monkey = monkey; // initialize the monkey
         this.children = new ArrayList<MonkeyNode>();
         buildChildrenList(dba, table); // build the children list
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MonkeyNode that = (MonkeyNode) o;
+        return monkey.equals(that.monkey);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(monkey);
     }
 
     // This method queries the database for all children of the given monkey node.
