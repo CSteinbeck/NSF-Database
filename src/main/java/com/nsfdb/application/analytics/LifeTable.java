@@ -1,6 +1,4 @@
-package com.nsfdb.application.analytics;//This is mostly re-purposed code from SelectTest.java
-//TODO: create a LifeTable object to store birth year, death year, and age
-//TODO: choose a data structure to make a table with. Considering a 2d array at the moment
+package com.nsfdb.application.analytics;
 
 import com.nsfdb.application.analytics.SqlServerDbAccessor;
 
